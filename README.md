@@ -1,4 +1,5 @@
-##多说评论邮件通知脚本程序
+## 多说评论邮件通知脚本程序
+
 使用，修改ds.config为你的正确配置信息：  
 
 ``` bash
@@ -16,8 +17,18 @@ secret = 多说的秘钥，在后台的设置查看
 period = 定时检查评论的时间（s）
 ```
    
+## 开机自启
+
+在 `/etc/rc.local` 的 **exit 0** 前加入，python 的路径视自己情况而定。
+``` bash
+/usr/bin/python /your_path/ds.py &
+exit 0
+
+```
+
    
-##License
+## License
+
 -------
 
 ```

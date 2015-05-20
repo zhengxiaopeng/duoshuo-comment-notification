@@ -8,12 +8,13 @@ import requests
 import smtplib
 import time
 import ConfigParser
-
+import os, sys
 
 def monitor():
     # 加载配置文件信息
     config = ConfigParser.ConfigParser()
-    config.read('./ds.config') # 当前目录下的ds.config
+    dirname, filename = os.path.split(os.path.abspath(sys.argv[0])) # 获取绝对目录
+    config.read(dirname + '/ds.config') # 当前目录下的ds.config
     # 初始化配置信息
     duoshuo_account = {}
     email_info = {}
