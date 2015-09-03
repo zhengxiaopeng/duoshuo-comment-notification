@@ -12,9 +12,15 @@ to_address = 你要接受邮件的地址
 [duoshuo_account]
 name = 多说的二级域名名, 如我的：rocko
 secret = 多说的秘钥，在后台的设置查看
+id = 多说用户 id，用于排除自己的评论。http://duoshuo.com/settings/ 中点击用户名然后在地址栏中的 profile 后跟着的数字即为 id
 
 [period_time]
 period = 定时检查评论的时间（s）
+```
+
+## 运行
+``` Bash
+python ds.py
 ```
    
 ## 开机自启
@@ -32,7 +38,7 @@ exit 0
 -------
 
 ```
-Copyright 2015 Rocko(zhengxiaopeng).
+Copyright 2015 Rocko (zhengxiaopeng.com) <rocko.zxp@gmail.com>.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
