@@ -91,6 +91,7 @@ def send_email(email_info, name, current_count, count, meta):
                         + u'\n用户昵称：' + unicode(meta.get('author_name')) \
                         + u'\n用户邮箱：' + unicode(meta.get('author_email')) \
                         + u'\n用户网站：' + unicode(meta.get('author_url')) \
+                        + u'\n评论文章：' + unicode(meta.get('thread_key')) \
                         + u'\n评论时间：' + unicode(meta.get('created_at')) \
                         + u'\n评论内容：' + unicode(meta.get('message')) \
                         + u'\n审核状态：' + unicode(meta.get('status'))
