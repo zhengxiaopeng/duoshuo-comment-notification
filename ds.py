@@ -49,44 +49,36 @@ def monitor():
 
     while True: # 轮询检查
         log(u'\n----->> get_duoshuo_log')
-        try:  # 防止get_duoshuo_log和send_email挂掉
-            current_count, meta = get_duoshuo_log(duoshuo_log_url)
-            # send_email(email_info, name, current_count, (current_count - last_count), meta)
-            log(u'当前数据条数：' + str(current_count))
-            	#print u'meta --->  ' + str(meta)
-            if (len(meta)) > 0 and (current_count > last_count) and (account_id != meta.get('author_id')):
-                send_email(email_info, name, current_count, (current_count - last_count), meta)
-                last_count = current_count
-
-        except Exception, e:
-            log(u'Error :    ', str(e))
-        
+        current_count, meta = get_duoshuo_log(duoshuo_log_url)
+        # send_email(email_info, name, current_count, (current_count - last_count), meta)
+        log(u'当前数据条数：' + str(current_count))
+        #print u'meta --->  ' + str(meta)
+        if (len(meta)) > 0 and (current_count > last_count) and (account_id != meta.get('author_id')):
+            send_email(email_info, name, current_count, (current_count - last_count), meta)
+            last_count = current_count
         time.sleep(period)
-
 
 # 把option的items映射到dict中
 def items2dict(options_dict, items_list):
     for item in items_list:
         options_dict[item[0]] = item[1]
 
-
 # 获取多说账户的后台信息log
 def get_duoshuo_log(url):
     # print url
-    r = requests.get(url)
-    resp = r.json()
-
-    if (resp['code'] == 0):  # code为0时才是正常的log的json信息
-        length = len(resp['response'])
-        meta = resp['response'][length - 1]['meta']
-        action = resp['response'][length - 1]['action']
-        if (action == 'create'):  # action为create时才是新增评论，去除其它如delete等操作的影响
-            return length, meta
-        else:
-            return length, {}
-
-    return 0, {}
-
+    count = 0
+    meta = {}
+    try:
+        r = requests.get(url, timeout = 15)
+        resp = r.json()
+        count = len(resp['response'])
+        action = resp['response'][count - 1]['action'] # 目前只是抓取最后一条
+        if (resp['code'] == 0) and (action == 'create'): 
+            meta = resp['response'][count - 1]['meta']
+    except Exception, e:
+        log('!!!Error' + str(e)) # TimeOut
+    finally:
+        return count, meta
 
 # 发送邮件
 def send_email(email_info, name, current_count, count, meta):
@@ -109,12 +101,17 @@ def send_email(email_info, name, current_count, count, meta):
     msg['From'] = email_info.get('from_address')
     msg['To'] = email_info.get('to_address')
     log(u'发送的信息：\n' + str(msg))
-    server = smtplib.SMTP()
-    server.connect(email_info.get('email_host'))
-    server.login(email_info.get('from_address'), email_info.get('password'))
-    server.sendmail(email_info.get('from_address'), [email_info.get('to_address')], msg.as_string())
-    server.close()
-    log('发送邮件完成')
+    
+    try:
+        server = smtplib.SMTP()
+        server.connect(email_info.get('email_host'))
+        server.login(email_info.get('from_address'), email_info.get('password'))
+        server.sendmail(email_info.get('from_address'), [email_info.get('to_address')], msg.as_string())
+        log(u'发送邮件完成')
+    except Exception, e:
+        log(u'邮件发送失败：' + str(e))
+    finally:
+        server.close()
 
 
 if __name__ == '__main__':
