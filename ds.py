@@ -10,7 +10,7 @@ import time
 import ConfigParser
 import os, sys
 
-debug = True
+debug = False
 
 def log(msg):
     if debug:
